@@ -1,5 +1,8 @@
 spack:
-  view: false
+  view:
+    default:
+      root: view
+      link: run
   specs:
   - 'gmake@4.4:'
   - awscli
