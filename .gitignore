@@ -1,0 +1,6 @@
+spack/
+.spack-env
+store/
+._view
+view
+.env
