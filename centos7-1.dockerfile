@@ -3,6 +3,8 @@ COPY CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo
 RUN yum install -y \
     bzip2 \
     file \
+    gcc \
+    gcc-c++ \
     git \
     patch \
     python3 \

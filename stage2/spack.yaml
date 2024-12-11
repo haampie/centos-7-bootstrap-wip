@@ -39,7 +39,7 @@ spack:
       access_pair:
         id_variable: GITHUB_USER
         secret_variable: GITHUB_TOKEN
-  compilers:
+  compilers::
   - compiler:
       spec: gcc@=10.5.0
       paths:
