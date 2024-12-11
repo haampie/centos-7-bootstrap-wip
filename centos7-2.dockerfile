@@ -1,4 +1,5 @@
 FROM centos7-1 AS with-spack
+ENV PYTHONUNBUFFERED=1
 COPY stage2/spack.yaml /spack/spack.yaml
 COPY stage2/spack.lock /spack/spack.lock
 RUN git clone --depth=1 https://github.com/spack/spack.git /root/spack
