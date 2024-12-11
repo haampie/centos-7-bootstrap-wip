@@ -13,7 +13,7 @@ spack:
 	git clone --depth=1 https://github.com/spack/spack $@
 
 .image1: centos7-1.dockerfile
-	$(DOCKER) build -t centos7-1 -f $< .
+	$(DOCKER) build -t centos7-1 -f centos7-1.dockerfile .
 	touch $@
 
 .stage1: spack .image1
