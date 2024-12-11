@@ -4,7 +4,7 @@ store/
 ._view
 view
 .env
-centos7-1
-centos7-2
-stage1_
-stage2_
+.image1
+.image2
+.stage1
+.stage2

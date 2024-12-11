@@ -2,39 +2,44 @@ DOCKER = docker
 export GITHUB_USER ?= haampie
 # export GITHUB_TOKEN ?= please-set-me
 
-.PHONY: centos7-1 centos7-2
+.PHONY: clean
 
-centos7-1: centos7-1.dockerfile
-	$(DOCKER) build -t $@ -f $< .
-	touch $@
+all: .image2
 
 spack:
 	git clone --depth=1 https://github.com/spack/spack $@
 
-stage1_: spack
+.image1: centos7-1.dockerfile
+	$(DOCKER) build -t centos7-1 -f $< .
+	touch $@
+
+.stage1: spack .image1
 	$(DOCKER) run --rm \
 		-v $(CURDIR):/spack \
 		-w /spack \
 		-e GITHUB_USER \
 		-e GITHUB_TOKEN \
 		-e PYTHONUNBUFFERED=1 \
+		-e SPACK_COLOR=always \
 		centos7-1 \
 		./spack/bin/spack -e ./stage1 install --no-check-signature
 	touch $@
 
-stage2_: spack stage1_
+.stage2: spack .stage1
 	$(DOCKER) run --rm \
 		-v $(CURDIR):/spack \
 		-w /spack \
 		-e GITHUB_USER \
 		-e GITHUB_TOKEN \
+		-e PYTHONUNBUFFERED=1 \
+		-e SPACK_COLOR=always \
 		centos7-1 \
-		./spack/bin/spack -e ./stage1 install --no-check-signature
+		./spack/bin/spack -e ./stage2 install --no-check-signature
 	touch $@
 
-centos7-2: centos7-2.dockerfile
-	$(DOCKER) build -t $@ -f $< .
+.image2: centos7-2.dockerfile .stage2
+	$(DOCKER) build -t centos7-2 -f centos7-2.dockerfile .
 	touch $@
 
 clean:
-	rm -f centos7-1 centos7-2 stage1_ stage2_
+	rm -f .image1 .image2 .stage1 .stage2
