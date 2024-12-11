@@ -1,6 +1,6 @@
 DOCKER = docker
 export GITHUB_USER ?= haampie
-export GITHUB_TOKEN ?= please-set-me
+# export GITHUB_TOKEN ?= please-set-me
 
 .PHONY: centos7-1 centos7-2
 
@@ -17,22 +17,19 @@ stage1_: spack
 		-w /spack \
 		-e GITHUB_USER \
 		-e GITHUB_TOKEN \
+		-e PYTHONUNBUFFERED=1 \
 		centos7-1 \
-		/bin/sh -c '\
-			./spack/bin/spack -e ./stage1 install -v --no-check-signature && \
-			./spack/bin/spack -e ./stage1 buildcache push --fail-fast --unsigned haampie'
+		./spack/bin/spack -e ./stage1 install --no-check-signature
 	touch $@
 
-stage2_: spack
+stage2_: spack stage1_
 	$(DOCKER) run --rm \
 		-v $(CURDIR):/spack \
 		-w /spack \
 		-e GITHUB_USER \
 		-e GITHUB_TOKEN \
 		centos7-1 \
-		/bin/sh -c '\
-			./spack/bin/spack -e ./stage2 install -v --no-check-signature && \
-			./spack/bin/spack -e ./stage2 buildcache push --fail-fast --unsigned haampie'
+		./spack/bin/spack -e ./stage1 install --no-check-signature
 	touch $@
 
 centos7-2: centos7-2.dockerfile

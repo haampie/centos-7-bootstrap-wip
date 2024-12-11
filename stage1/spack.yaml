@@ -12,9 +12,12 @@ spack:
   mirrors:
     haampie:
       url: oci://ghcr.io/haampie/centos-7-cache
-      access_pair:
-        id_variable: GITHUB_USER
-        secret_variable: GITHUB_TOKEN
+      autopush: true
+      signed: false
+      push:
+        access_pair:
+          id_variable: GITHUB_USER
+          secret_variable: GITHUB_TOKEN
   packages:
     all:
       require:
