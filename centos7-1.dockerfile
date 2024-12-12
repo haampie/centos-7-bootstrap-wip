@@ -10,4 +10,3 @@ RUN yum install -y \
     python3 \
     vim && \
     yum clean all
-

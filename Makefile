@@ -28,12 +28,12 @@ spack:
 			$$(./spack/bin/spack -e ./stage1 location -i gcc)'
 	touch $@
 
-.stage2: spack .compiler
-	$(DOCKER) run $(RUN_ARGS) centos7-1 ./spack/bin/spack -e ./stage2 install --no-check-signature
+.stage2: .compiler
+	$(DOCKER) run $(RUN_ARGS) centos7-1 ./spack/bin/spack --backtrace -e ./stage2 install --no-check-signature
 	touch $@
 
 .image2: centos7-2.dockerfile .stage2
-	$(DOCKER) build -t centos7-2 -f centos7-2.dockerfile --arg SPACK_COMMIT=$(SPACK_COMMIT) .
+	$(DOCKER) build -t centos7-2 -f centos7-2.dockerfile --build-arg SPACK_COMMIT=$(SPACK_COMMIT) .
 	touch $@
 
 clean:
