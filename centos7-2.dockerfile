@@ -1,8 +1,9 @@
 FROM centos7-1 AS with-spack
+ARG SPACK_COMMIT
 ENV PYTHONUNBUFFERED=1
 COPY stage2/spack.yaml /spack/spack.yaml
 COPY stage2/spack.lock /spack/spack.lock
-RUN git clone --depth=1 https://github.com/spack/spack.git /root/spack
+RUN git clone https://github.com/spack/spack.git /root/spack && git -C /root/spack checkout $(SPACK_COMMIT)
 RUN /root/spack/bin/spack -e /spack install --no-check-signature --cache-only
  
 FROM centos:7.9.2009
