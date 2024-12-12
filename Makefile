@@ -4,7 +4,8 @@ export GITHUB_USER ?= haampie
 # export GITHUB_TOKEN ?= please-set-me
 
 RUN_ARGS = --rm -v $(CURDIR):/spack -w /spack \
-	-e GITHUB_USER -e GITHUB_TOKEN -e PYTHONUNBUFFERED=1 -e SPACK_COLOR=always
+	-e GITHUB_USER -e GITHUB_TOKEN -e PYTHONUNBUFFERED=1 -e SPACK_COLOR=always \
+	-e SPACK_USER_CACHE_PATH=/spack/cache
 
 .PHONY: clean distclean all
 
@@ -21,7 +22,13 @@ spack:
 	$(DOCKER) run $(RUN_ARGS) centos7-1 ./spack/bin/spack -e ./stage1 install --no-check-signature
 	touch $@
 
-.stage2: spack .stage1
+.compiler: .stage1
+	$(DOCKER) run $(RUN_ARGS) centos7-1 /bin/sh -c '\
+		./spack/bin/spack -e ./stage2 compiler find \
+			$$(./spack/bin/spack -e ./stage1 location -i gcc)'
+	touch $@
+
+.stage2: spack .compiler
 	$(DOCKER) run $(RUN_ARGS) centos7-1 ./spack/bin/spack -e ./stage2 install --no-check-signature
 	touch $@
 
@@ -33,4 +40,4 @@ clean:
 	rm -f .image1 .image2 .stage1 .stage2
 
 distclean: clean
-	rm -rf spack stage1/store stage2/store
+	rm -rf spack stage1/store stage2/store cache
