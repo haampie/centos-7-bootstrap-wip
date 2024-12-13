@@ -7,7 +7,7 @@ RUN_ARGS = --rm -v $(CURDIR):/spack -w /spack \
 	-e GITHUB_USER -e GITHUB_TOKEN -e PYTHONUNBUFFERED=1 -e SPACK_COLOR=always \
 	-e SPACK_USER_CACHE_PATH=/spack/cache
 
-.PHONY: clean distclean all
+.PHONY: clean distclean all reconcretize-stage1 reconcretize-stage2
 
 all: .image2
 
@@ -29,12 +29,18 @@ spack:
 	touch $@
 
 .stage2: .compiler
-	$(DOCKER) run $(RUN_ARGS) centos7-1 ./spack/bin/spack --backtrace -e ./stage2 install --no-check-signature
+	$(DOCKER) run $(RUN_ARGS) centos7-1 ./spack/bin/spack -e ./stage2 install --no-check-signature
 	touch $@
 
 .image2: centos7-2.dockerfile .stage2
 	$(DOCKER) build -t centos7-2 -f centos7-2.dockerfile --build-arg SPACK_COMMIT=$(SPACK_COMMIT) .
 	touch $@
+
+reconcretize-stage1: .image1
+	$(DOCKER) run $(RUN_ARGS) centos7-1 ./spack/bin/spack -e ./stage1 concretize --force --fresh
+
+reconcretize-stage2: .compiler
+	$(DOCKER) run $(RUN_ARGS) centos7-1 ./spack/bin/spack -e ./stage2 concretize --force --fresh
 
 clean:
 	rm -f .image1 .image2 .stage1 .stage2
