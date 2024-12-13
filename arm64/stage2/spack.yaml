@@ -1,0 +1,58 @@
+spack:
+  view:
+    default:
+      root: view
+      link: run
+  specs:
+  - 'gmake@4.4:'
+  - awscli
+  - binutils +ld +gas
+  - clingo-bootstrap@spack +optimized
+  - curl
+  - file
+  - gcc@14 +profiled +binutils build_type=Release
+  - git
+  - gnupg
+  - gzip
+  - lz4
+  - lzo
+  - patch
+  - patchelf
+  - py-boto3
+  - python@3.11 +optimizations
+  - tar
+  - unzip
+  - vim
+  - xz
+  - zstd
+  config:
+    install_tree:
+      root: $env/store
+  concretizer:
+    unify: true
+  mirrors:
+    eugeneswalker:
+      url: oci://ghcr.io/eugeneswalker/ubuntu-18.04-cache
+      autopush: true
+      signed: false
+      push:
+        access_pair:
+          id_variable: GITHUB_USER
+          secret_variable: GITHUB_TOKEN
+  packages:
+    all:
+      require: '%gcc@14 target=aarch64'
+  compilers:
+  - compiler:
+      spec: gcc@=14.2.0
+      paths:
+        cc: /spack/stage1/store/linux-ubuntu18.04-aarch64/gcc-7.5.0/gcc-14.2.0-5p6iy2wfj56uxabsgswtooczistj557v/bin/gcc
+        cxx: /spack/stage1/store/linux-ubuntu18.04-aarch64/gcc-7.5.0/gcc-14.2.0-5p6iy2wfj56uxabsgswtooczistj557v/bin/g++
+        f77: /spack/stage1/store/linux-ubuntu18.04-aarch64/gcc-7.5.0/gcc-14.2.0-5p6iy2wfj56uxabsgswtooczistj557v/bin/gfortran
+        fc: /spack/stage1/store/linux-ubuntu18.04-aarch64/gcc-7.5.0/gcc-14.2.0-5p6iy2wfj56uxabsgswtooczistj557v/bin/gfortran
+      flags: {}
+      operating_system: ubuntu18.04
+      target: aarch64
+      modules: []
+      environment: {}
+      extra_rpaths: []
