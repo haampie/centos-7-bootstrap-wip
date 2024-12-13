@@ -12,5 +12,4 @@ FROM centos:7.9.2009
 ENV PATH=/spack/view/bin:$PATH
 COPY CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo
 COPY --from=with-spack /spack /spack
-RUN yum install -y glibc-devel && yum clean all
-RUN rm /lib64/libcrypt.so  # newer glibc does not have libcrypt.so, so avoid linking to it
+RUN yum install -y glibc-devel && yum clean all && rm /lib64/libcrypt.so
