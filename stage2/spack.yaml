@@ -10,7 +10,7 @@ spack:
   - clingo-bootstrap@spack +optimized
   - curl
   - file
-  - gcc@13 +profiled +binutils build_type=Release
+  - gcc@10 +profiled +binutils build_type=Release
   - git
   - gnupg
   - gzip
