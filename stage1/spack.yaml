@@ -12,7 +12,6 @@ spack:
   mirrors:
     haampie:
       url: oci://ghcr.io/haampie/centos-7-cache
-      autopush: true
       signed: false
       push:
         access_pair:
