@@ -1,13 +1,11 @@
 DOCKER = docker
 SPACK_COMMIT = 0ce38ed1092aefeccb31ffed8e23e8d3ef58a4b1
-export GITHUB_USER ?= haampie
-# export GITHUB_TOKEN ?= please-set-me
+IMAGE_NAME = ghcr.io/spack/x86_64_v3-linux-gnu:v$(shell date '+%Y-%m-%d')
 
 RUN_ARGS = --rm -v $(CURDIR):/spack -w /spack \
-	-e GITHUB_USER -e GITHUB_TOKEN -e PYTHONUNBUFFERED=1 -e SPACK_COLOR=always \
-	-e SPACK_USER_CACHE_PATH=/spack/cache
+	-e PYTHONUNBUFFERED=1 -e SPACK_COLOR=always -e SPACK_USER_CACHE_PATH=/spack/cache
 
-.PHONY: clean distclean all reconcretize-stage1 reconcretize-stage2
+.PHONY: all clean distclean push reconcretize-stage1 reconcretize-stage2
 
 all: .image2
 
@@ -33,7 +31,7 @@ spack:
 	touch $@
 
 .image2: centos7-2.dockerfile .stage2
-	$(DOCKER) build -t centos7-2 -f centos7-2.dockerfile --build-arg SPACK_COMMIT=$(SPACK_COMMIT) .
+	$(DOCKER) build -t $(IMAGE_NAME) -f centos7-2.dockerfile --build-arg SPACK_COMMIT=$(SPACK_COMMIT) .
 	touch $@
 
 reconcretize-stage1: .image1
@@ -41,6 +39,13 @@ reconcretize-stage1: .image1
 
 reconcretize-stage2: .compiler
 	$(DOCKER) run $(RUN_ARGS) centos7-1 ./spack/bin/spack -e ./stage2 concretize --force --fresh
+
+push: .stage1 .stage2
+	if [ -z "$$GITHUB_USER" ] || [ -z "$$GITHUB_TOKEN" ]; then
+		echo "GITHUB_USER and GITHUB_TOKEN must be set"; exit 1
+	fi
+	$(DOCKER) run $(RUN_ARGS) -e GITHUB_USER -e GITHUB_TOKEN centos7-1 ./spack/bin/spack -e ./stage1 buildcache push
+	$(DOCKER) run $(RUN_ARGS) -e GITHUB_USER -e GITHUB_TOKEN centos7-1 ./spack/bin/spack -e ./stage2 buildcache push
 
 clean:
 	rm -f .image1 .image2 .stage1 .stage2
