@@ -34,8 +34,8 @@ spack:
     all:
       require: '%gcc@10 target=x86_64_v3'
   mirrors:
-    haampie:
-      url: oci://ghcr.io/haampie/centos-7-cache
+    spack:
+      url: oci://ghcr.io/spack/centos-7-cache
       signed: false
       push:
         access_pair:

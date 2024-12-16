@@ -44,8 +44,8 @@ push: .stage1 .stage2
 	if [ -z "$$GITHUB_USER" ] || [ -z "$$GITHUB_TOKEN" ]; then \
 	    echo "GITHUB_USER and GITHUB_TOKEN must be set"; exit 1; \
 	fi
-	$(DOCKER) run $(RUN_ARGS) -e GITHUB_USER -e GITHUB_TOKEN centos7-1 ./spack/bin/spack -e ./stage1 buildcache push
-	$(DOCKER) run $(RUN_ARGS) -e GITHUB_USER -e GITHUB_TOKEN centos7-1 ./spack/bin/spack -e ./stage2 buildcache push
+	$(DOCKER) run $(RUN_ARGS) -e GITHUB_USER -e GITHUB_TOKEN centos7-1 ./spack/bin/spack -e ./stage1 buildcache push spack
+	$(DOCKER) run $(RUN_ARGS) -e GITHUB_USER -e GITHUB_TOKEN centos7-1 ./spack/bin/spack -e ./stage2 buildcache push spack
 
 clean:
 	rm -f .image1 .image2 .stage1 .stage2

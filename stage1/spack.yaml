@@ -10,8 +10,8 @@ spack:
   concretizer:
     unify: true
   mirrors:
-    haampie:
-      url: oci://ghcr.io/haampie/centos-7-cache
+    spack:
+      url: oci://ghcr.io/spack/centos-7-cache
       signed: false
       push:
         access_pair:
